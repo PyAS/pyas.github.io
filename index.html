@@ -11,6 +11,26 @@
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+    <script type="text/javascript">
+    init_mathjax = function() {
+        if (window.MathJax) {
+            // MathJax loaded
+            MathJax.Hub.Config({
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+                },
+                displayAlign: 'left', // Change this to 'center' to center equations.
+                "HTML-CSS": {
+                    styles: {'.MathJax_Display': {"margin": 0}}
+                }
+            });
+            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+        }
+    }
+    init_mathjax();
+    </script>
   </head>
   <body>
     <div class="wrapper">
@@ -37,6 +57,260 @@
         <p>I usually write .... Not for sharing what I know. But more for learning what I don’t.</p>
         <p>Working hard on making some new switches, in my career!</p>
         <p><strong>-- Thanks for visiting! <a class="btn btn-primary btn-large" href="mailto:as@pyas.me">Email me. &raquo;</a></strong></p>
+      </section>
+
+      <section>
+        <h1>>>> i just learned writing Math in IPy NB.</h1>
+        <p><small>&mdash; Written on March 2, 2015 | Also at <a href="http://pyas.me/ipynbv/Write_Math_in_IPyNB_2mar15.html">Pyas.Me</a></small></p>
+        <div class="text_cell_render border-box-sizing rendered_html">
+        <p>This is my experience while learning to write mathematical expressions in IPython NoteBook in such a way that when I convert this into <em>html</em>, it should still work. I found the necessary source (mentioned below) and tried it. But I had to go through a rigorous strain in getting my html file render the math expressions as intended.</p>
+        <h2 id="lessons-learned">Lessons Learned !</h2>
+        <p><strong>I learned pretty serious lessons on my way of coming up with this webpage. I first went on typing all that I saw on <a href="http://nbviewer.ipython.org/github/adrn/ipython/blob/2.x/examples/Notebook/Typesetting%20Math%20Using%20MathJax.ipynb">this page</a> line by line. On my local machine, every output was displayed like absolutely what it was suposed to be. But when I converted this <code>.ipynb</code> file into <code>html</code> using <code>ipython nbconvert</code> command and opened the newly created html file using a browser, I was surprised to find that none of the outputs worked. There were no mathematical equations at all. All I could see was the raw T<sub>E</sub>X commands. Before doing this whole check, I got excited and deployed the html page on my website running on Amazon AWS instance. It was disappointing!</strong></p>
+        <p>Initially, I tought that I should have not installed something that would enable a perfect html output. I was right about that. I googled and found that I was supposed to have MathJax.JS in my machine and the html should have acess to this JS file while loading in order to render math expresions correctly. Without knowing what went wrong, I spent some time upgrading my <em>ipython</em> locally and on my server. I tried to install on my server stuff like <code>pyzmq</code> and <code>nose</code> without any least idea what they were meant to be. Honestly, I am still not sure if installing and testing <a href="http://docs.mathjax.org/en/latest/installation.html">MathJax</a> on my machine and in my server helped me or not. But a simple code replacement in my html file did surely make the whole difference.</p>
+        <p>When I converted IPython Notebok file (<code>.ipynb</code>) into <code>html</code>, it is somehow taking some default <code>JavaScript</code> path which doesn't seem to be working. I then had to chat on <a href="https://gitter.im/ipython/ipython/help">Gitter.Im's IPython Help Chat Room</a> and take inputs from peers to do this whole work. Especially, Eliott's following comment showed me what went wrong.</p>
+        <blockquote>
+        <p>The MathJax script URL is 404'ing on your website In nbviewer, it uses https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML, but yours seems to be some specific mirror https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML</p>
+        </blockquote>
+        <hr></hr>
+
+        <p>And the Documentation on <a href="http://docs.mathjax.org/en/latest/configuration.html">MathJax</a> site gave me a hint on this which I couldn't instantly understand at the first glance.</p>
+        <blockquote>
+        <blockquote>
+        <p>You load MathJax into a web page by including its main JavaScript file into the page. That is done via a <code>&lt;script&gt;</code> tag that links to the MathJax.js file. To do that, place the following line in the <code>&lt;head&gt;</code> section of your document:</p>
+        </blockquote>
+        </blockquote>
+        <pre><code>&lt;script type=&quot;text/javascript&quot; src=&quot;path-to-MathJax/MathJax.js&quot;&gt;&lt;/script&gt;</code></pre>
+        <blockquote>
+        <blockquote>
+        <p>where path-to-MathJax is replaced by the URL of the copy of MathJax that you are loading. For example, if you are using the MathJax distributed network service, the tag might be</p>
+        </blockquote>
+        </blockquote>
+        <pre><code>&lt;script type=&quot;text/javascript&quot; src=&quot;http://cdn.mathjax.org/mathjax/latest/MathJax.js&quot;&gt;&lt;/script&gt;</code></pre>
+        <blockquote>
+        <blockquote>
+        <p>If you have installed MathJax yourself, path-to-MathJax will be the location of MathJax on your server, or (if you are using MathJax locally rather than through a server) the location of that directory on your hard disk. For example, if the MathJax directory is at the top level of your web server’s directory hierarchy, you might use</p>
+        </blockquote>
+        </blockquote>
+        <pre><code>&lt;script type=&quot;text/javascript&quot; src=&quot;/MathJax/MathJax.js&quot;&gt;&lt;/script&gt;</code></pre>
+        <blockquote>
+        <blockquote>
+        <p>to load MathJax.</p>
+        </blockquote>
+        </blockquote>
+        <hr />
+        <h4 id="thats-it-i-thought-i-should-look-for-this-wrong-place-in-my-html-and-replace-it-with-a-correct-link-and-i-would-be-done-with-it.">That's it! I thought I should look for this wrong place in my html and replace it with a correct link and I would be done with it.</h4>
+        <p>Not yet!</p>
+        <p>I ended up with another issue! This time, the last couple cells in this page would display the quations perfectly, but none of the others. I tried my best to understand what went wrong again. I finally gave up and relied on <a href="http://stackoverflow.com/questions/28808680/typesetting-math-using-mathjax-for-ipython-notebook-web-page/28809385#28809385">StackOverflow</a> this time. Thanks to Jakob who explained that <strong><code>ipython nbconvert</code></strong> uses <strong><code>pandoc</code></strong> which requires each equation to be written within the delimiters <code>$$ ... $$</code>. This point is in fact mentioned in the same source website, but I failed to notice it due to my ignorance with this subject. I am glad I am making it up in this new arena and I can see that it is going to be a hell of a ride!</p>
+        <p>Finaly, everything worked.</p>
+        <p>So the take away is:</p>
+        <ol style="list-style-type: decimal">
+        <li>Embedding the right MathJax.js source link is very essential for this to work.</li>
+        <li>The <code>$$ ... $$</code> delimiters for each equation are very necessary if an <code>.ipynb</code> file is <code>nbconverted</code>-converted into <code>.html</code> via <code>pandoc</code>.</li>
+        </ol>
+        <h2 id="finally-everything-works-just-fine">Finally, everything works just fine!!!</h2>
+        </div>
+        <div class="text_cell_render border-box-sizing rendered_html">
+        <ul>
+        <li>Now what one can see from here on is a total <em>COPY</em> of <a href="http://nbviewer.ipython.org/github/adrn/ipython/blob/2.x/examples/Notebook/Typesetting%20Math%20Using%20MathJax.ipynb">this link</a> as it is.</li>
+        <li>The only exception being the <strong><code>$$ ... $$</code></strong> delimiters covering each equation. Thanks to the creators!</li>
+        <li>For more extensive resources and commands, here is a <a href="http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">StackExchange Link</a></li>
+        </ul>
+        </div>
+        <div class="text_cell_render border-box-sizing rendered_html">
+        <h1 id="motivating-examples">Motivating Examples</h1>
+        <hr />
+        <h2 id="the-lorenz-equations">The Lorenz Equations</h2>
+        <h3 id="source">Source</h3>
+        <pre><code>$$
+        \begin{align}
+        \dot{x} &amp; = \sigma(y-x) \\
+        \dot{y} &amp; = \rho x - y - xz \\
+        \dot{z} &amp; = -\beta z + xy
+        \end{align}
+        $$</code></pre>
+        <h3 id="display">Display</h3>
+        <p><span class="math">\[
+        \begin{align}
+        \dot{x} &amp; = \sigma(y-x) \\
+        \dot{y} &amp; = \rho x - y - xz \\
+        \dot{z} &amp; = -\beta z + xy
+        \end{align}
+        \]</span></p>
+        </div>
+        <div class="text_cell_render border-box-sizing rendered_html">
+        <h2 id="the-cauchy-schwarz-inequality">The Cauchy-Schwarz Inequality</h2>
+        <h3 id="source">Source</h3>
+        <pre><code>$$
+        \begin{equation*}
+        \left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)
+        \end{equation*}
+        $$</code></pre>
+        <h3 id="display">Display</h3>
+        <p><span class="math">\[
+        \begin{equation*}
+        \left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)
+        \end{equation*}
+        \]</span></p>
+        </div>
+        <div class="text_cell_render border-box-sizing rendered_html">
+        <h2 id="a-cross-product-formula">A Cross Product Formula</h2>
+        <h3 id="source">Source</h3>
+        <pre><code>$$
+        \begin{equation*}
+        \mathbf{V}_1 \times \mathbf{V}_2 =  \begin{vmatrix}
+        \mathbf{i} &amp; \mathbf{j} &amp; \mathbf{k} \\
+        \frac{\partial X}{\partial u} &amp;  \frac{\partial Y}{\partial u} &amp; 0 \\
+        \frac{\partial X}{\partial v} &amp;  \frac{\partial Y}{\partial v} &amp; 0
+        \end{vmatrix}
+        \end{equation*}
+        $$</code></pre>
+        <h3 id="display">Display</h3>
+        <p><span class="math">\[
+        \begin{equation*}
+        \mathbf{V}_1 \times \mathbf{V}_2 =  \begin{vmatrix}
+        \mathbf{i} &amp; \mathbf{j} &amp; \mathbf{k} \\
+        \frac{\partial X}{\partial u} &amp;  \frac{\partial Y}{\partial u} &amp; 0 \\
+        \frac{\partial X}{\partial v} &amp;  \frac{\partial Y}{\partial v} &amp; 0
+        \end{vmatrix}
+        \end{equation*}
+        \]</span></p>
+        </div>
+        <div class="text_cell_render border-box-sizing rendered_html">
+        <h2 id="the-probability-of-getting-k-heads-when-flipping-n-coins-is">The probability of getting (k) heads when flipping (n) coins is</h2>
+        <h3 id="source">Source</h3>
+        <pre><code>$$
+        \begin{equation*}
+        P(E)   = {n \choose k} p^k (1-p)^{ n-k}
+        \end{equation*}
+        $$</code></pre>
+        <h3 id="display">Display</h3>
+        <p><span class="math">\[
+        \begin{equation*}
+        P(E)   = {n \choose k} p^k (1-p)^{ n-k}
+        \end{equation*}
+        \]</span></p>
+        </div>
+        <div class="text_cell_render border-box-sizing rendered_html">
+        <h2 id="an-identity-of-ramanujan">An Identity of Ramanujan</h2>
+        <h4 id="perhaps-most-beautiful-among-all">Perhaps, most beautiful among all!</h4>
+        <h3 id="source">Source</h3>
+        <pre><code>$$
+        \begin{equation*}
+        \frac{1}{\Bigl(\sqrt{\phi \sqrt{5}}-\phi\Bigr) e^{\frac25 \pi}} =
+        1+\frac{e^{-2\pi}} {1+\frac{e^{-4\pi}} {1+\frac{e^{-6\pi}}
+        {1+\frac{e^{-8\pi}} {1+\ldots} } } }
+        \end{equation*}
+        $$</code></pre>
+        <h3 id="display">Display</h3>
+        <p><span class="math">\[
+        \begin{equation*}
+        \frac{1}{\Bigl(\sqrt{\phi \sqrt{5}}-\phi\Bigr) e^{\frac25 \pi}} =
+        1+\frac{e^{-2\pi}} {1+\frac{e^{-4\pi}} {1+\frac{e^{-6\pi}}
+        {1+\frac{e^{-8\pi}} {1+\ldots} } } }
+        \end{equation*}
+        \]</span></p>
+        </div>
+        <div class="text_cell_render border-box-sizing rendered_html">
+        <h2 id="a-rogers-ramanujan-identity">A Rogers-Ramanujan Identity</h2>
+        <h3 id="source">Source</h3>
+        <pre><code>$$
+        \begin{equation*}
+        1 +  \frac{q^2}{(1-q)}+\frac{q^6}{(1-q)(1-q^2)}+\cdots =
+        \prod_{j=0}^{\infty}\frac{1}{(1-q^{5j+2})(1-q^{5j+3})},
+        \quad\quad \text{for $|q|&lt;1$}.
+        \end{equation*}
+        $$</code></pre>
+        <h3 id="display">Display</h3>
+        <p><span class="math">\[
+        \begin{equation*}
+        1 + \frac{q^2}{(1-q)}+\frac{q^6}{(1-q)(1-q^2)}+\cdots =
+        \prod_{j=0}^{\infty}\frac{1}{(1-q^{5j+2})(1-q^{5j+3})},
+        \quad\quad \text{for $|q|&lt;1$}.
+        \end{equation*}
+        \]</span></p>
+        </div>
+        <div class="text_cell_render border-box-sizing rendered_html">
+        <h2 id="maxwells-equations">Maxwell's Equations</h2>
+        <h4 id="my-favorite-not-because-i-know-them-completely-but-because-it-is-physics">My favorite, not because I know them completely, but because it is physics!</h4>
+        <h3 id="source">Source</h3>
+        <pre><code>$$
+        \begin{align}
+        \nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} &amp; = \frac{4\pi}{c}\vec{\mathbf{j}} \\   \nabla \cdot \vec{\mathbf{E}} &amp; = 4 \pi \rho \\
+        \nabla \times \vec{\mathbf{E}}\, +\, \frac1c\, \frac{\partial\vec{\mathbf{B}}}{\partial t} &amp; = \vec{\mathbf{0}} \\
+        \nabla \cdot \vec{\mathbf{B}} &amp; = 0
+        \end{align}
+        $$</code></pre>
+        <h3 id="display">Display</h3>
+        <p><span class="math">\[
+        \begin{align}
+        \nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} &amp; = \frac{4\pi}{c}\vec{\mathbf{j}} \\   \nabla \cdot \vec{\mathbf{E}} &amp; = 4 \pi \rho \\
+        \nabla \times \vec{\mathbf{E}}\, +\, \frac1c\, \frac{\partial\vec{\mathbf{B}}}{\partial t} &amp; = \vec{\mathbf{0}} \\
+        \nabla \cdot \vec{\mathbf{B}} &amp; = 0
+        \end{align}
+        \]</span></p>
+        </div>
+        <div class="text_cell_render border-box-sizing rendered_html">
+        <h2 id="equation-numbering-and-references">Equation Numbering and References</h2>
+        <p>Equation numbering and referencing will be available in a future version of IPython.</p>
+        </div>
+        <div class="text_cell_render border-box-sizing rendered_html">
+        <h1 id="inline-typesetting-mixing-markdown-and-tex">Inline Typesetting (Mixing Markdown and TeX)</h1>
+        <hr />
+        <p>While display equations look good for a page of samples, the ability to mix math and <em>formatted</em> <strong>text</strong> in a paragraph is also important.</p>
+        <h2 id="source">Source</h2>
+        <p><code>This expression $\sqrt{3x-1}+(1+x)^2$ is an example of a TeX inline equation in a **[Markdown-formatted](http://daringfireball.net/projects/markdown/)** sentence.</code></p>
+        <h2 id="display">Display</h2>
+        <p>This expression <span class="math">\(\sqrt{3x-1}+(1+x)^2\)</span> is an example of a TeX inline equation in a <strong><a href="http://daringfireball.net/projects/markdown/">Markdown-formatted</a></strong> sentence.</p>
+        </div>
+        <div class="text_cell_render border-box-sizing rendered_html">
+        <h1 id="other-syntax">Other Syntax</h1>
+        <hr />
+        <p>You will notice in other places on the web that <code>$$</code> are needed explicitly to begin and end MathJax typesetting. This is <strong>not</strong> required if you will be using TeX environments, but the IPython notebook will accept this syntax on legacy notebooks.</p>
+        <h3 id="source">Source</h3>
+        <pre><code>$$
+        \begin{array}{c}
+        y_1 \\\
+        y_2 \mathtt{t}_i \\\
+        z_{3,4}
+        \end{array}
+        $$</code></pre>
+        <pre><code>$$
+        \begin{array}{c}
+        y_1 \cr
+        y_2 \mathtt{t}_i \cr
+        y_{3}
+        \end{array}
+        $$</code></pre>
+        <pre><code>$$\begin{eqnarray}
+        x&#39; &amp;=&amp; &amp;x \sin\phi &amp;+&amp; z \cos\phi \\
+        z&#39; &amp;=&amp; - &amp;x \cos\phi &amp;+&amp; z \sin\phi \\
+        \end{eqnarray}$$</code></pre>
+        <pre><code>$$
+        x=4
+        $$</code></pre>
+        <h3 id="display">Display</h3>
+        <p><span class="math">\[
+        \begin{array}{c}
+        y_1 \\\
+        y_2 \mathtt{t}_i \\\
+        z_{3,4}
+        \end{array}
+        \]</span></p>
+        <p><span class="math">\[
+        \begin{array}{c}
+        y_1 \cr
+        y_2 \mathtt{t}_i \cr
+        y_{3}
+        \end{array}
+        \]</span></p>
+        <p><span class="math">\[\begin{eqnarray}
+        x&#39; &amp;=&amp; &amp;x \sin\phi &amp;+&amp; z \cos\phi \\
+        z&#39; &amp;=&amp; - &amp;x \cos\phi &amp;+&amp; z \sin\phi \\
+        \end{eqnarray}\]</span></p>
+        <p><span class="math">\[
+        x=4
+        \]</span></p>
+        </div>
       </section>
 
       <section>
